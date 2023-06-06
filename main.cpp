@@ -9,11 +9,11 @@ int main(){
 
     SparseMatrix matrix(4, 4);
 
-    matrix.insert(0, 0, 50.0);
-    matrix.insert(0, 1, 30.0);
+    // matrix.insert(0, 0, 50.0);
+    // matrix.insert(0, 1, 30.0);
     matrix.insert(1, 0, 10.0);
     matrix.insert(1, 2, -20.0);
-    matrix.insert(3, 3, -5.0);
+    // matrix.insert(3, 3, -5.0);
 
     matrix.print();
 
