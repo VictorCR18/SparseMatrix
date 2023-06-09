@@ -11,21 +11,12 @@ private:
     Node* m_head;
 
 public:
-    SparseMatrix();
     SparseMatrix(int m, int n);
     ~SparseMatrix();
     void insert(int m, int n, double value);
     double get(int m, int n);
     void print();
 };
-
-SparseMatrix::SparseMatrix() {
-    m_head = new Node;
-    m_head->linha = -1;
-    m_head->coluna = -1;
-    m_head->direita = m_head;
-    m_head->abaixo = m_head;
-}
 
 SparseMatrix::SparseMatrix(int m, int n) {
     if (m <= 0 || n <= 0) {
@@ -57,6 +48,93 @@ SparseMatrix::~SparseMatrix() {
     delete m_head;
 }
 
+// void SparseMatrix::insert(int m, int n, double value) {
+//     if (m < 0 || n < 0 || m >= m_head->linha || n >= m_head->coluna) {
+//         throw std::out_of_range("Posição inválida na matriz.");
+//     }
+
+//     Node* novo = new Node;
+//     novo->linha = m;
+//     novo->coluna = n;
+//     novo->valor = value;
+
+//     Node* anteriorLinha = m_head;
+//     while (anteriorLinha->abaixo != m_head && anteriorLinha->abaixo->linha <= m) {
+//         anteriorLinha = anteriorLinha->abaixo;
+//     }
+
+//     if (anteriorLinha->abaixo != m_head && anteriorLinha->abaixo->linha == m && anteriorLinha->abaixo->coluna <= n) {
+//         Node* anteriorColuna = anteriorLinha->abaixo;
+//         while (anteriorColuna->direita != anteriorLinha && anteriorColuna->direita->coluna < n) {
+//             anteriorColuna = anteriorColuna->direita;
+//         }
+
+//         if (anteriorColuna->direita != anteriorLinha && anteriorColuna->direita->coluna == n) {
+//             anteriorColuna->direita->valor = value;
+//             delete novo;
+//             return;
+//         }
+
+//         novo->direita = anteriorColuna->direita;
+//         anteriorColuna->direita = novo;
+//     } else {
+//         novo->direita = anteriorLinha->direita;
+//         anteriorLinha->abaixo = novo;
+//     }
+
+//     Node* anteriorColuna = m_head;
+//     while (anteriorColuna->direita != m_head && anteriorColuna->direita->coluna <= n) {
+//         anteriorColuna = anteriorColuna->direita;
+//     }
+
+//     novo->abaixo = anteriorColuna->direita;
+//     anteriorColuna->direita = novo;
+// }
+
+// void SparseMatrix::insert(int m, int n, double value) {
+//     if (m < 0 || n < 0 || m >= m_head->linha || n >= m_head->coluna) {
+//         throw std::out_of_range("Posição inválida na matriz.");
+//     }
+
+//     Node* novo = new Node;
+//     novo->linha = m;
+//     novo->coluna = n;
+//     novo->valor = value;
+
+//     Node* anteriorLinha = m_head;
+//     while (anteriorLinha->abaixo != m_head && anteriorLinha->abaixo->linha <= m) {
+//         anteriorLinha = anteriorLinha->abaixo;
+//     }
+
+//     if (anteriorLinha->abaixo != m_head && anteriorLinha->abaixo->linha == m && anteriorLinha->abaixo->coluna <= n) {
+//         Node* anteriorColuna = anteriorLinha->abaixo;
+//         while (anteriorColuna->direita != anteriorLinha && anteriorColuna->direita->coluna < n) {
+//             anteriorColuna = anteriorColuna->direita;
+//         }
+
+//         if (anteriorColuna->direita != anteriorLinha && anteriorColuna->direita->coluna == n) {
+//             anteriorColuna->direita->valor = value; // Sobreescrita do valor existente
+//             delete novo;
+//             return;
+//         }
+
+//         novo->direita = anteriorColuna->direita;
+//         anteriorColuna->direita = novo;
+//     } else {
+//         novo->direita = anteriorLinha->direita;
+//         anteriorLinha->abaixo = novo;
+//     }
+
+//     Node* anteriorColuna = m_head;
+//     while (anteriorColuna->direita != m_head && anteriorColuna->direita->coluna <= n) {
+//         anteriorColuna = anteriorColuna->direita;
+//     }
+
+//     novo->abaixo = anteriorColuna->direita;
+//     anteriorColuna->direita = novo;
+// }
+
+
 void SparseMatrix::insert(int m, int n, double value) {
     if (m < 0 || n < 0 || m >= m_head->linha || n >= m_head->coluna) {
         throw std::out_of_range("Posição inválida na matriz.");
@@ -68,11 +146,11 @@ void SparseMatrix::insert(int m, int n, double value) {
     novo->valor = value;
 
     Node* anteriorLinha = m_head;
-    while (anteriorLinha->abaixo != m_head && anteriorLinha->abaixo->linha <= m) {
+    while (anteriorLinha->abaixo != m_head && anteriorLinha->abaixo->linha < m) {
         anteriorLinha = anteriorLinha->abaixo;
     }
 
-    if (anteriorLinha->abaixo != m_head && anteriorLinha->abaixo->linha == m && anteriorLinha->abaixo->coluna <= n) {
+    if (anteriorLinha->abaixo != m_head && anteriorLinha->abaixo->linha == m) {
         Node* anteriorColuna = anteriorLinha->abaixo;
         while (anteriorColuna->direita != anteriorLinha && anteriorColuna->direita->coluna < n) {
             anteriorColuna = anteriorColuna->direita;
@@ -87,17 +165,26 @@ void SparseMatrix::insert(int m, int n, double value) {
         novo->direita = anteriorColuna->direita;
         anteriorColuna->direita = novo;
     } else {
-        novo->direita = anteriorLinha->direita;
+        Node* temp = anteriorLinha->abaixo;
         anteriorLinha->abaixo = novo;
+        novo->abaixo = temp;
+
+        Node* temp2 = novo;
+        while (temp2->direita != anteriorLinha) {
+            temp2 = temp2->direita;
+        }
+        temp2->direita = novo;
     }
 
     Node* anteriorColuna = m_head;
-    while (anteriorColuna->direita != m_head && anteriorColuna->direita->coluna <= n) {
+    while (anteriorColuna->direita != m_head && anteriorColuna->direita->coluna < n) {
         anteriorColuna = anteriorColuna->direita;
     }
 
-    novo->abaixo = anteriorColuna->direita;
+    Node* temp3 = anteriorColuna->direita;
     anteriorColuna->direita = novo;
+    novo->direita = temp3;
+
 }
 
 
@@ -129,6 +216,34 @@ double SparseMatrix::get(int m, int n) {
     return 0.0;
 }
 
+// double SparseMatrix::get(int m, int n) {
+//     if (m < 0 || n < 0 || m >= m_head->linha || n >= m_head->coluna) {
+//         throw std::out_of_range("Posição inválida na matriz.");
+//     }
+
+//     Node* auxLinha = m_head->abaixo;
+
+//     while (auxLinha != m_head && auxLinha->linha < m) {
+//         auxLinha = auxLinha->abaixo;
+//     }
+
+//     if (auxLinha != m_head && auxLinha->linha == m) {
+//         Node* auxColuna = auxLinha->direita;
+
+//         while (auxColuna != auxLinha && auxColuna->coluna < n) {
+//             auxColuna = auxColuna->direita;
+//         }
+
+//         if (auxColuna != auxLinha && auxColuna->coluna == n) {
+//             return auxColuna->valor;
+//         } else {
+//             return 0.0; // Valor não encontrado, retorna 0
+//         }
+//     } else {
+//         return 0.0; // Linha não encontrada, retorna 0
+//     }
+// }
+
 
 void SparseMatrix::print() {
     int m = m_head->linha;
@@ -153,6 +268,5 @@ void SparseMatrix::print() {
         std::cout << std::endl;
     }
 }
-
 
 #endif
