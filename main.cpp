@@ -15,10 +15,11 @@ SparseMatrix* readSparseMatrix(const std::string& nomeArquivo) {
 
     SparseMatrix* matriz = new SparseMatrix(m, n);
 
-    int linha, coluna;
-    double valor;
-    while (arquivo >> linha >> coluna >> valor) {
-        matriz->insert(linha, coluna, valor); // Insere os elementos na matriz
+    while (true) {
+        double value;
+        arquivo >> m >> n >> value;
+        if( arquivo.eof() ) break;
+        matriz->insert(m, n, value);
     }
 
     arquivo.close();
@@ -48,13 +49,41 @@ SparseMatrix* sum(SparseMatrix* A, SparseMatrix* B) {
             // Calcula a soma dos valores e insere na matriz C
             double sum = valueA + valueB;
             C->insert(i, j, sum);
-            C->print();
-            cout << valueA << " " << valueB << " "  << sum << endl;
-            cout << endl;
         }
     }
 
     return C; // Retorna a matriz C resultante da soma de A e B
+}
+
+SparseMatrix* multiply(SparseMatrix* A, SparseMatrix* B) {
+    // Verifica se as matrizes podem ser multiplicadas
+    if (A->getMaxN() != B->getMaxM()) {
+        throw std::invalid_argument("O número de colunas de A deve ser igual ao número de linhas de B para realizar a multiplicação.");
+    }
+
+    int m = A->getMaxM();
+    int n = B->getMaxN();
+    int p = A->getMaxN();
+
+    // Cria uma nova matriz C com o tamanho apropriado
+    SparseMatrix* C = new SparseMatrix(m, n);
+
+    // Percorre todas as posições da matriz C
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            double sum = 0.0;
+            // Multiplica a linha i da matriz A com a coluna j da matriz B
+            for (int k = 0; k < p; k++) {
+                sum += A->get(i, k) * B->get(k, j);
+            }
+            // Insere o resultado na matriz C somente se for diferente de zero
+            if (sum != 0.0) {
+                C->insert(i, j, sum);
+            }
+        }
+    }
+
+    return C; // Retorna a matriz C resultante da multiplicação de A por B
 }
 
 int main(){
@@ -122,62 +151,29 @@ int main(){
 
                 cout << "Matriz salva com sucesso!" << endl;
             }
-            break;
-        }
-
-
+                break;
+            }
             case 2: {
-                cout << "Digite o nome do arquivo da primeira matriz: ";
+                cout << endl << "Digite o nome do arquivo da primeira matriz: ";
                 string filenameA;
                 cin >> filenameA;
 
-                // Abre o arquivo da primeira matriz para leitura
-                ifstream fileA(filenameA);
-                if (!fileA.is_open()) {
-                    cout << "Erro ao abrir o arquivo da primeira matriz." << endl;
-                    break;
-                }
-
                 int mA, nA;
-                fileA >> mA >> nA;
 
                 // Cria uma matriz A
                 SparseMatrix* A = new SparseMatrix(mA, nA);
 
-                 while (true) {
-                    double value;
-                    fileA >> mA >> nA >> value;
-                    if( fileA.eof() ) break;
-                    A->insert(mA, nA, value);
-                }
-
-                fileA.close();
-
+                A = readSparseMatrix(filenameA); 
+                
                 cout << "Digite o nome do arquivo da segunda matriz: ";
                 string filenameB;
                 cin >> filenameB;
 
-                // Abre o arquivo da segunda matriz para leitura
-                ifstream fileB(filenameB);
-                if (!fileB.is_open()) {
-                    cout << "Erro ao abrir o arquivo da segunda matriz." << endl;
-                    break;
-                }
-
                 int mB, nB;
-                fileB >> mB >> nB;
-
                 // Cria uma matriz B
                 SparseMatrix* B = new SparseMatrix(mB, nB);
 
-                while (true) {
-                    double value;
-                    fileB >> mB >> nB >> value;
-                    if( fileB.eof() ) break;
-                    B->insert(mB, nB, value);
-                }
-
-                fileB.close();
+                B = readSparseMatrix(filenameB);
 
                 SparseMatrix* C = sum(A, B);
                 cout << "Matriz somada com sucesso!" << endl;
