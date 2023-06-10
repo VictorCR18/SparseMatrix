@@ -1,8 +1,31 @@
 #include <iostream>
 #include <fstream>
-#include "SparseMatrix.h" // Supondo que você tenha implementado a classe SparseMatrix
+#include "SparseMatrix.h"
 
 using namespace std;
+
+SparseMatrix* readSparseMatrix(const std::string& nomeArquivo) {
+    std::ifstream arquivo(nomeArquivo);
+    if (!arquivo.is_open()) {
+        throw std::runtime_error("Não foi possível abrir o arquivo: " + nomeArquivo);
+    }
+
+    int m, n;
+    arquivo >> m >> n; // Lê as dimensões da matriz
+
+    SparseMatrix* matriz = new SparseMatrix(m, n);
+
+    int linha, coluna;
+    double valor;
+    while (arquivo >> linha >> coluna >> valor) {
+        matriz->insert(linha, coluna, valor); // Insere os elementos na matriz
+    }
+
+    arquivo.close();
+
+    return matriz;
+}
+
 
 SparseMatrix* sum(SparseMatrix* A, SparseMatrix* B) {
     // Verifica se as matrizes têm o mesmo tamanho
@@ -15,7 +38,6 @@ SparseMatrix* sum(SparseMatrix* A, SparseMatrix* B) {
 
     // Cria uma nova matriz C com o mesmo tamanho de A e B
     SparseMatrix* C = new SparseMatrix(m, n);
-
     // Percorre todas as posições da matriz
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
@@ -26,6 +48,9 @@ SparseMatrix* sum(SparseMatrix* A, SparseMatrix* B) {
             // Calcula a soma dos valores e insere na matriz C
             double sum = valueA + valueB;
             C->insert(i, j, sum);
+            C->print();
+            cout << valueA << " " << valueB << " "  << sum << endl;
+            cout << endl;
         }
     }
 
@@ -33,22 +58,143 @@ SparseMatrix* sum(SparseMatrix* A, SparseMatrix* B) {
 }
 
 int main(){
-    
-    cout << "Criacao da matriz" << endl;
-    int m, n, value;
-    cin >> m >> n;
-    SparseMatrix matrix(m, n); // Criando uma matriz esparsa com m linhas e n colunas
-    cout << endl;
-    matrix.print(); // Imprimindo a matriz esparsa
-    cout << endl;
+    while (true){
+        cout << "1 - Adicionar Matriz: " << endl;
+        cout << "2 - Somar Matrizes: " << endl;
+        cout << "3 - Sair: " << endl;
+        cout << "Opcao: ";
+        int op;
+        cin >> op;
+        switch(op){
+            case 1: {
+            cout << endl << "Criacao da matriz..." << endl;
+            int m, n, value;
+            cout << "Insira o numero de linhas e colunas: ";
+            cin >> m >> n;
 
-    while(true) {
-        cout << "Digite o numero da linha e coluna e o valor" << endl;
-        cin >> m >> n >> value; // Entrando com a linha, coluna e valor para o elemento da matriz
-        matrix.insert(m, n, value); // Inserindo o valor na matriz esparsa na posição especificada
-        cout << endl;
-        matrix.print(); // Imprimindo a matriz esparsa
-        cout << endl;
+            SparseMatrix* matriz = new SparseMatrix(m, n);
+
+            cout << endl;
+            matriz->print();
+            cout << endl;
+
+            int c {1};
+            while (c == 1) {
+                cout << "Insira a posicao e valor na matriz: ";
+                cin >> m >> n >> value;
+                matriz->insert(m, n, value);
+                cout << endl;
+                matriz->print();
+                cout << endl;
+                cout << "Finalizar?" << endl;
+                cout << "1 - Nao" << endl << "0 - Sim" << endl;
+                cin >> c;
+                cout << endl;
+            }
+
+            cout << "Matriz adicionada com sucesso!" << endl << endl;
+            cout << "Salvar em um arquivo?" << endl;
+            cout << "1 - Sim" << endl << "0 - Nao" << endl;
+            int key;
+            cin >> key;
+            if (key == 1) {
+                cout << "Digite o nome do arquivo para salvar a matriz: ";
+                string filename;
+                cin >> filename;
+
+                ofstream file(filename);
+                if (!file.is_open()) {
+                    throw std::runtime_error("Não foi possível abrir o arquivo: " + filename);
+                }
+
+                file << matriz->getMaxM() << " " << matriz->getMaxN() << std::endl;
+
+                for (int i = 0; i < matriz->getMaxM(); i++) {
+                    for (int j = 0; j < matriz->getMaxN(); j++) {
+                        double value = matriz->get(i, j);
+                        if (value != 0.0) {
+                            file << i << " " << j << " " << value << std::endl;
+                        }
+                    }
+                }
+
+                file.close();
+
+                cout << "Matriz salva com sucesso!" << endl;
+            }
+            break;
+        }
+
+
+            case 2: {
+                cout << "Digite o nome do arquivo da primeira matriz: ";
+                string filenameA;
+                cin >> filenameA;
+
+                // Abre o arquivo da primeira matriz para leitura
+                ifstream fileA(filenameA);
+                if (!fileA.is_open()) {
+                    cout << "Erro ao abrir o arquivo da primeira matriz." << endl;
+                    break;
+                }
+
+                int mA, nA;
+                fileA >> mA >> nA;
+
+                // Cria uma matriz A
+                SparseMatrix* A = new SparseMatrix(mA, nA);
+
+                 while (true) {
+                    double value;
+                    fileA >> mA >> nA >> value;
+                    if( fileA.eof() ) break;
+                    A->insert(mA, nA, value);
+                }
+
+                fileA.close();
+
+                cout << "Digite o nome do arquivo da segunda matriz: ";
+                string filenameB;
+                cin >> filenameB;
+
+                // Abre o arquivo da segunda matriz para leitura
+                ifstream fileB(filenameB);
+                if (!fileB.is_open()) {
+                    cout << "Erro ao abrir o arquivo da segunda matriz." << endl;
+                    break;
+                }
+
+                int mB, nB;
+                fileB >> mB >> nB;
+
+                // Cria uma matriz B
+                SparseMatrix* B = new SparseMatrix(mB, nB);
+
+                while (true) {
+                    double value;
+                    fileB >> mB >> nB >> value;
+                    if( fileB.eof() ) break;
+                    B->insert(mB, nB, value);
+                }
+
+                fileB.close();
+
+                SparseMatrix* C = sum(A, B);
+                cout << "Matriz somada com sucesso!" << endl;
+                cout << endl;
+                C->print();
+                cout << endl;
+                break;
+            }
+            case 3: {
+                cout << "Saindo..." << endl;
+                return 0;
+            }
+            default: {
+                cout << "Opção inválida!" << endl;
+                break;
+            }
+        }
     }
 
     return 0;

@@ -101,7 +101,7 @@ void SparseMatrix::insert(int m, int n, double value) {
         noVizinhoC = noVizinhoC->direita;
     }
 
-    std::cout << noVizinhoC->linha << ", " << noVizinhoC->coluna << std::endl;
+    // std::cout << noVizinhoC->linha << ", " << noVizinhoC->coluna << std::endl;
 
     // Encontra o nó vizinho abaixo na mesma coluna
     Node* noVizinhoL = colunaH;
@@ -110,7 +110,7 @@ void SparseMatrix::insert(int m, int n, double value) {
         noVizinhoL = noVizinhoL->abaixo;
     }
 
-    std::cout << noVizinhoL->linha << ", " << noVizinhoL->coluna << std::endl;
+    // std::cout << noVizinhoL->linha << ", " << noVizinhoL->coluna << std::endl;
 
     // Se o elemento já existe na posição, atualiza seu valor
     if (noVizinhoL->direita->linha == m && noVizinhoC->abaixo->coluna == n) {
