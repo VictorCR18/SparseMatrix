@@ -45,8 +45,7 @@ Aqui está uma explicação linha por linha do código:
 20. Define o valor da variável `coluna` do nó da cabeça da matriz (`m_head`) como 0, indicando que é a coluna atual.
 
 Em resumo, o construtor cria uma matriz esparsa representada por uma lista circular duplamente encadeada, onde cada
-
- nó representa um elemento não nulo da matriz. A cabeça da matriz (`m_head`) é uma estrutura especial que armazena informações sobre o tamanho da matriz. Os nós adicionais são criados para representar as linhas e colunas da matriz, e os ponteiros são configurados de forma a formar loops circulares que facilitam as operações na matriz.
+nó representa um elemento não nulo da matriz. A cabeça da matriz (`m_head`) é uma estrutura especial que armazena informações sobre o tamanho da matriz. Os nós adicionais são criados para representar as linhas e colunas da matriz, e os ponteiros são configurados de forma a formar loops circulares que facilitam as operações na matriz.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -143,3 +142,95 @@ Os passos do método são os seguintes:
 5. Após o loop das colunas, imprime um caractere de quebra de linha (`'\n'`) para separar as linhas da matriz.
 
 Em resumo, o método `print` percorre todas as posições da matriz esparsa e imprime os valores correspondentes na saída padrão, formando uma representação visual da matriz.
+
+
+# main.cpp
+
+A função `SparseMatrix* readSparseMatrix(const std::string& nomeArquivo)` lê uma matriz esparça de um arquivo e retorna um ponteiro para um objeto `SparseMatrix`.
+
+1. Abre o arquivo especificado pelo parâmetro `nomeArquivo` usando `std::ifstream`.
+
+2. Verifica se o arquivo foi aberto com sucesso. Se não, lança uma exceção `std::runtime_error` com uma mensagem de erro.
+
+3. Declara as variáveis `m` e `n` para armazenar as dimensões da matriz.
+
+4. Lê as dimensões da matriz do arquivo usando `arquivo >> m >> n`.
+
+5. Cria um novo objeto `SparseMatrix` com as dimensões lidas.
+
+6. Entra em um loop infinito.
+
+7. Lê os valores de `m`, `n` e `value` do arquivo usando `arquivo >> m >> n >> value`.
+
+8. Verifica se chegou ao final do arquivo (`arquivo.eof()`). Se sim, sai do loop.
+
+9. Insere o valor `value` na posição `(m, n)` da matriz usando o método `matriz->insert(m, n, value)`.
+
+10. Fecha o arquivo.
+
+11. Retorna o ponteiro para o objeto `SparseMatrix` criado.
+
+No geral, a função lê as dimensões da matriz e os valores de células da matriz do arquivo, cria um objeto `SparseMatrix` correspondente e insere os valores lidos na matriz. Em seguida, retorna o ponteiro para essa matriz.
+
+--------------------------------------------------------------------------------------------------------------------
+
+A função `SparseMatrix* sum(SparseMatrix* A, SparseMatrix* B)` realiza a soma de duas matrizes esparsas `A` e `B`. 
+
+1. Verifica se as matrizes têm o mesmo tamanho comparando as dimensões máximas (`getMaxM()` e `getMaxN()`). Se as dimensões forem diferentes, lança uma exceção `std::invalid_argument` com uma mensagem de erro.
+
+2. Obtém as dimensões máximas da matriz `A`.
+
+3. Cria uma nova matriz `C` com as mesmas dimensões de `A` e `B`.
+
+4. Percorre todas as posições da matriz usando dois loops `for` aninhados.
+
+5. Para cada posição `(i, j)` na matriz:
+   - Obtém os valores de `A` e `B` nas posições correspondentes usando os métodos `get(i, j)`.
+   - Calcula a soma dos valores `valueA` e `valueB`.
+   - Insere o valor da soma na posição `(i, j)` da matriz `C` usando o método `insert(i, j, sum)`.
+
+6. Retorna o ponteiro para a matriz `C`, que contém o resultado da soma de `A` e `B`.
+
+Note que essa função assume que as matrizes têm o mesmo tamanho e realiza a soma dos valores correspondentes em cada posição. Caso as matrizes não tenham o mesmo tamanho, uma exceção é lançada.
+
+--------------------------------------------------------------------------------------------------------------------
+
+A função `SparseMatrix* multiply(SparseMatrix* A, SparseMatrix* B)` realiza a multiplicação de duas matrizes esparsas `A` e `B`.
+
+1. Verifica se o número de colunas de `A` é igual ao número de linhas de `B` (`getMaxN()` de `A` é comparado com `getMaxM()` de `B`). Se forem diferentes, lança uma exceção `std::runtime_error` com uma mensagem de erro.
+
+2. Obtém as dimensões máximas de `A`, `B` e define a dimensão de `C` (`m`, `n` e `p`).
+
+3. Cria uma nova matriz `C` com dimensões `m x p` usando `new SparseMatrix(m, p)`.
+
+4. Inicia dois loops `for` aninhados para percorrer as posições da matriz resultante `C`.
+
+5. Para cada posição `(i, j)` na matriz `C`:
+   - Inicia uma variável `sum` para armazenar a soma dos produtos dos elementos correspondentes de `A` e `B`.
+   - Inicia um terceiro loop `for` para percorrer as posições correspondentes em `A` e `B` (coluna de `A` e linha de `B`).
+   - Multiplica os elementos correspondentes de `A` e `B` usando os métodos `get(i, k)` e `get(k, j)`, respectivamente, e soma o resultado na variável `sum`.
+   - Verifica se o valor da soma (`sum`) é diferente de zero. Se for diferente de zero, insere o valor na posição `(i, j)` da matriz `C` usando o método `insert(i, j, sum)`.
+
+6. Retorna o ponteiro para a matriz `C`, que contém o resultado da multiplicação de `A` e `B`.
+
+Esta função assume que as matrizes têm as dimensões corretas para multiplicação (o número de colunas de `A` é igual ao número de linhas de `B`). Caso as dimensões não sejam adequadas, uma exceção é lançada.
+
+--------------------------------------------------------------------------------------------------------------------
+
+1. A função `main()` é o ponto de entrada do programa. Dentro dela, há um loop `while(true)` que permite que o programa seja executado continuamente até que o usuário escolha a opção "4" para sair.
+
+2. O programa exibe um menu com quatro opções:
+
+   a. Opção 1: Adicionar Matriz - Solicita ao usuário que insira o número de linhas e colunas da matriz, cria uma matriz esparsa vazia e permite que o usuário insira os valores em posições específicas da matriz. Após cada inserção, a matriz é exibida na tela. O usuário tem a opção de finalizar a adição de valores ou continuar adicionando mais valores. Em seguida, o usuário pode optar por salvar a matriz em um arquivo.
+
+   b. Opção 2: Somar Matrizes - Solicita ao usuário que forneça os nomes de arquivo de duas matrizes armazenadas anteriormente. Em seguida, carrega as matrizes a partir dos arquivos, realiza a soma das matrizes e exibe o resultado na tela. O usuário tem a opção de salvar a matriz resultante em um arquivo.
+
+   c. Opção 3: Multiplicar Matrizes - Funciona de maneira semelhante à opção 2, mas em vez de realizar a soma, realiza a multiplicação das duas matrizes fornecidas.
+
+   d. Opção 4: Sair - Encerra o programa.
+
+3. Cada opção é implementada como um bloco `case` dentro da estrutura `switch(op)`. Dependendo da opção selecionada, o código correspondente será executado.
+
+4. Dentro dos blocos `case`, várias funções e operações são chamadas para realizar as tarefas solicitadas pelo usuário, como criar matrizes, inserir valores, realizar operações de soma e multiplicação, exibir matrizes e salvar matrizes em arquivos.
+
+5. A memória alocada dinamicamente é liberada usando o operador `delete` para evitar vazamentos de memória.
