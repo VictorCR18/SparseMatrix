@@ -1,3 +1,6 @@
+// Antonio Victor Cavalcante Rodrigues - 535739
+// Nauan Aires de Castro e Silva - 536825
+
 #include <iostream>
 #include <fstream>
 #include "SparseMatrix.h"
@@ -82,10 +85,11 @@ SparseMatrix *multiply(SparseMatrix *A, SparseMatrix *B) {
 
 int main(){
     while(true){
-        cout << "1 - Adicionar Matriz: " << endl;
+        cout << endl << "1 - Adicionar Matriz: " << endl;
         cout << "2 - Somar Matrizes: " << endl;
         cout << "3 - Multiplicar Matrizes: " << endl;
-        cout << "4 - Sair: " << endl << endl;
+        cout << "4 - Abrir arquivo:  " << endl;
+        cout << "5 - Sair: " << endl << endl;
         cout << "Opcao: ";
         int op;
         cin >> op;
@@ -102,8 +106,8 @@ int main(){
             matriz->print();
             cout << endl;
 
-            int c {1};
-            while(c == 1){
+            int c {0};
+            while(c == 0){
                 cout << "Insira a posicao e valor na matriz: ";
                 cin >> m >> n >> value;
                 matriz->insert(m, n, value);
@@ -111,14 +115,14 @@ int main(){
                 matriz->print();
                 cout << endl;
                 cout << "Finalizar?" << endl;
-                cout << "1 - Nao" << endl << "0 - Sim" << endl;
+                cout << "1 - Sim" << endl << "0 - Nao" << endl;
                 cin >> c;
                 cout << endl;
             }
 
             cout << "Matriz adicionada com sucesso!" << endl << endl;
             cout << "Salvar em um arquivo?" << endl;
-            cout << "1 - Sim" << endl << "0 - Nao" << endl;
+            cout << "1 - Sim" << endl << "0 - Nao" << endl << endl;
             int key;
             cin >> key;
             if(key == 1){
@@ -261,8 +265,17 @@ int main(){
 
                 break;
             }
-
             case 4: {
+                cout << endl << "Digite o nome do arquivo da matriz: ";
+                string filenameA;
+                cin >> filenameA;
+                cout << endl;
+                SparseMatrix *A = readSparseMatrix(filenameA);
+                A->print();
+
+                break;
+            }
+            case 5:{
                 cout << "Saindo..." << endl;
                 return 0;
             }

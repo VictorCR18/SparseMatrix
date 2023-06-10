@@ -2,8 +2,6 @@
 
 O código apresentado define o construtor da classe `SparseMatrix`, que cria uma matriz esparsa com tamanho `m` por `n`. A matriz esparsa é uma estrutura de dados otimizada para armazenar matrizes que possuem a maioria dos elementos com valor zero.
 
-Aqui está uma explicação linha por linha do código:
-
 1. Verifica se os valores `m` e `n` são positivos. Caso contrário, lança uma exceção com uma mensagem de erro.
 
 2. Atribui o valor de `n` para a variável `maxn` da classe.
@@ -226,8 +224,10 @@ Esta função assume que as matrizes têm as dimensões corretas para multiplica
    b. Opção 2: Somar Matrizes - Solicita ao usuário que forneça os nomes de arquivo de duas matrizes armazenadas anteriormente. Em seguida, carrega as matrizes a partir dos arquivos, realiza a soma das matrizes e exibe o resultado na tela. O usuário tem a opção de salvar a matriz resultante em um arquivo.
 
    c. Opção 3: Multiplicar Matrizes - Funciona de maneira semelhante à opção 2, mas em vez de realizar a soma, realiza a multiplicação das duas matrizes fornecidas.
+   
+   d. Opção 4: Essa opção de abrir arquivo permite que o usuário possa carregar matrizes previamente salvas em arquivos.
 
-   d. Opção 4: Sair - Encerra o programa.
+   e. Opção 5: Sair - Encerra o programa.
 
 3. Cada opção é implementada como um bloco `case` dentro da estrutura `switch(op)`. Dependendo da opção selecionada, o código correspondente será executado.
 
