@@ -8,12 +8,12 @@ struct Node {
     int coluna;
     double valor;
 
-    Node(Node *direita, Node *abaixo, int lin, int col, double val) {
-        this->direita = direita;
-        this->abaixo = abaixo;
-        this->linha = lin;
-        this->coluna = col;
-        this->valor = val;
+    Node(Node *dir, Node *ab, int l, int c, double v) {
+        this->direita = dir;
+        this->abaixo = ab;
+        this->linha = l;
+        this->coluna = c;
+        this->valor = v;
     }
 };
 

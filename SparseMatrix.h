@@ -28,16 +28,17 @@ SparseMatrix::SparseMatrix(int m, int n) {
     this->maxm = m;
 
     this->m_head = new Node(nullptr, nullptr, -1, -1, 0);
-    Node * aux = m_head;
+
+    Node * aux = this->m_head;
 
     for(int i = 0; i < m; i ++){
-        aux->abaixo = new Node(nullptr, nullptr, i, -1, 0);
+        aux->abaixo = new Node(nullptr, nullptr, i, -1, 2);
         aux = aux->abaixo;
         aux->direita = aux;
         aux->abaixo = m_head;
     }
 
-    aux = m_head;
+    aux = this->m_head;
 
     for(int i = 0; i < n; i++){
         aux->direita = new Node(nullptr, nullptr, -1, i, 0);
@@ -68,45 +69,78 @@ SparseMatrix::~SparseMatrix() {
     delete m_head;
 }
 
+// void SparseMatrix::insert(int m, int n, double value) {
+//     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
+//         throw std::out_of_range("Posição inválida na matriz.");
+//     }
+
+//     Node * linhaH = this->m_head->abaixo;
+
+//     while (linhaH != m_head && linhaH->linha < m) {
+//         linhaH = linhaH->abaixo;
+//     }
+
+//     Node * colunaH = linhaH->direita;
+
+//     while (colunaH != m_head && colunaH->coluna < n) {
+//         colunaH = colunaH->direita;
+//     }
+
+//     Node * noVizinhoC = colunaH;
+
+//     while (noVizinhoC->direita != colunaH && noVizinhoC->direita->coluna <= n) {
+//         noVizinhoC = noVizinhoC->direita;
+//     }
+
+//     Node * noVizinhoL = colunaH;
+
+//     while (noVizinhoL->abaixo != colunaH && noVizinhoL->abaixo->linha <= m) {
+//         noVizinhoL = noVizinhoL->abaixo;
+//     }
+
+
+//     if(noVizinhoL->linha == m && noVizinhoC->coluna == n) {
+//         noVizinhoL->valor = value;
+//         return;
+//     }
+
+//     Node * novo = new Node(noVizinhoL->direita, noVizinhoC->abaixo, m, n, value);
+    
+//     noVizinhoL->direita = novo;
+//     noVizinhoC->abaixo = novo; 
+// }
+
+
 void SparseMatrix::insert(int m, int n, double value) {
     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
         throw std::out_of_range("Posição inválida na matriz.");
     }
 
-    Node * linhaH = this->m_head->abaixo;
-    Node * colunaH = this->m_head->direita;
-
+    Node* linhaH = this->m_head->abaixo;
     while (linhaH != m_head && linhaH->linha < m) {
         linhaH = linhaH->abaixo;
     }
 
-    while (colunaH != m_head && colunaH->coluna < n) {
+    Node* colunaH = linhaH->direita;
+    while (colunaH != linhaH && colunaH->coluna < n) {
         colunaH = colunaH->direita;
     }
 
-    Node * noVizinhoC = linhaH;
+    // Node* noVizinhoC = ;
+    // while (linhaH != m_head && linhaH->linha < m) {
+    //     linhaH = linhaH->abaixo;
+    // }
 
-    while (noVizinhoC->direita != linhaH && noVizinhoC->direita->coluna <= n) {
-        noVizinhoC = noVizinhoC->direita;
-    }
-
-    Node * noVizinhoL = colunaH;
-
-    while (noVizinhoL->abaixo != colunaH && noVizinhoL->abaixo->linha <= m) {
-        noVizinhoL = noVizinhoL->abaixo;
-    }
-
-    if(noVizinhoL->linha == m && noVizinhoC->coluna == n) {
-        noVizinhoL->valor = value;
+    if (colunaH->linha == m && colunaH->coluna == n) {
+        colunaH->valor = value;
         return;
     }
 
-    Node * novo = new Node(noVizinhoL->direita, noVizinhoC->abaixo, m, n, value);
-    
-    noVizinhoL->direita = novo;
-    noVizinhoC->abaixo  = novo; 
-}
+    Node* novo = new Node(linhaH->direita, colunaH->abaixo, m, n, value);
 
+    linhaH->direita = novo;
+    colunaH->abaixo  = novo;
+}
 
 double SparseMatrix::get(int m, int n) {
     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
@@ -119,17 +153,14 @@ double SparseMatrix::get(int m, int n) {
     while (linhaH != m_head && linhaH->linha < m) {
         linhaH = linhaH->abaixo;
     }
-
-    // std::cout << linhaH->linha << ", " << linhaH->coluna << std::endl;
-
     if (linhaH != m_head && linhaH->linha == m) {
         Node* colunaH = linhaH->direita;
 
-        // Percorrer a lista encadeada na coluna correta
         while (colunaH != linhaH && colunaH->coluna != n) {
             colunaH = colunaH->direita;
         }
 
+        // std::cout << ((colunaH->coluna == n) ? "true" : "false ")<< n << std::endl;
         if (colunaH != linhaH && colunaH->coluna == n) {
             return colunaH->valor;
         }
