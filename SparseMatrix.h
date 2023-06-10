@@ -69,78 +69,77 @@ SparseMatrix::~SparseMatrix() {
     delete m_head;
 }
 
-// void SparseMatrix::insert(int m, int n, double value) {
-//     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
-//         throw std::out_of_range("Posição inválida na matriz.");
-//     }
-
-//     Node * linhaH = this->m_head->abaixo;
-
-//     while (linhaH != m_head && linhaH->linha < m) {
-//         linhaH = linhaH->abaixo;
-//     }
-
-//     Node * colunaH = linhaH->direita;
-
-//     while (colunaH != m_head && colunaH->coluna < n) {
-//         colunaH = colunaH->direita;
-//     }
-
-//     Node * noVizinhoC = colunaH;
-
-//     while (noVizinhoC->direita != colunaH && noVizinhoC->direita->coluna <= n) {
-//         noVizinhoC = noVizinhoC->direita;
-//     }
-
-//     Node * noVizinhoL = colunaH;
-
-//     while (noVizinhoL->abaixo != colunaH && noVizinhoL->abaixo->linha <= m) {
-//         noVizinhoL = noVizinhoL->abaixo;
-//     }
-
-
-//     if(noVizinhoL->linha == m && noVizinhoC->coluna == n) {
-//         noVizinhoL->valor = value;
-//         return;
-//     }
-
-//     Node * novo = new Node(noVizinhoL->direita, noVizinhoC->abaixo, m, n, value);
-    
-//     noVizinhoL->direita = novo;
-//     noVizinhoC->abaixo = novo; 
-// }
-
-
 void SparseMatrix::insert(int m, int n, double value) {
     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
         throw std::out_of_range("Posição inválida na matriz.");
     }
 
-    Node* linhaH = this->m_head->abaixo;
+    Node * linhaH = this->m_head->abaixo;
+
     while (linhaH != m_head && linhaH->linha < m) {
         linhaH = linhaH->abaixo;
     }
 
-    Node* colunaH = linhaH->direita;
-    while (colunaH != linhaH && colunaH->coluna < n) {
+    Node * colunaH = m_head->direita;
+
+    while (colunaH != m_head && colunaH->coluna < n) {
         colunaH = colunaH->direita;
     }
 
-    // Node* noVizinhoC = ;
-    // while (linhaH != m_head && linhaH->linha < m) {
-    //     linhaH = linhaH->abaixo;
-    // }
+    Node * noVizinhoC = linhaH;
 
-    if (colunaH->linha == m && colunaH->coluna == n) {
-        colunaH->valor = value;
+    while (noVizinhoC->direita != linhaH && noVizinhoC->direita->coluna < n) {
+        noVizinhoC = noVizinhoC->direita;
+    }
+
+ std::cout << noVizinhoC->linha << ", " << noVizinhoC->coluna << std::endl;
+
+    Node * noVizinhoL = colunaH;
+
+    while (noVizinhoL->abaixo != colunaH && noVizinhoL->abaixo->linha < m) {
+        noVizinhoL = noVizinhoL->abaixo;
+    }
+
+ std::cout << noVizinhoL->linha << ", " << noVizinhoL->coluna << std::endl;
+
+    if(noVizinhoL->direita->linha == m && noVizinhoC->abaixo->coluna == n) {
+        noVizinhoL->valor = value;
         return;
     }
 
-    Node* novo = new Node(linhaH->direita, colunaH->abaixo, m, n, value);
-
-    linhaH->direita = novo;
-    colunaH->abaixo  = novo;
+    Node * novo = new Node(noVizinhoC->direita, noVizinhoL->abaixo, m, n, value);
+    
+    noVizinhoC->direita = novo; 
+    noVizinhoL->abaixo  = novo;
 }
+
+
+// void SparseMatrix::insert(int m, int n, double value) {
+//     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
+//         throw std::out_of_range("Posição inválida na matriz.");
+//     }
+
+//     Node* linhaH = this->m_head->abaixo;
+//     while (linhaH != m_head && linhaH->linha < m) {
+//         linhaH = linhaH->abaixo;
+//     }
+
+//     Node* colunaH = linhaH->direita;
+//     while (colunaH != linhaH && colunaH->coluna < n) {
+//         colunaH = colunaH->direita;
+//     }
+
+//     if (colunaH->linha == m && colunaH->coluna == n) {
+//         colunaH->valor = value;
+//         return;
+//     }
+
+//     Node* novo = new Node(linhaH->direita, colunaH->abaixo, m, n, value);
+
+//     linhaH->direita = novo;
+//     colunaH->abaixo  = novo;
+//     std::cout << colunaH->linha << ", " << colunaH->coluna << std::endl;
+// }
 
 double SparseMatrix::get(int m, int n) {
     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
@@ -175,14 +174,12 @@ void SparseMatrix::print() {
     int m = this->maxm;
     int n = this->maxn;
 
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
             std::cout << get(i, j) << " ";
         }
         std::cout << '\n';
     }
 }
-
-
 
 #endif
