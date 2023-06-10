@@ -17,6 +17,12 @@ class SparseMatrix {
         void insert(int m, int n, double value);
         double get(int m, int n);
         void print();
+        int getMaxM() const {
+            return maxm;
+        };
+        int getMaxN() const {
+             return maxn;
+        };
 };
 
 SparseMatrix::SparseMatrix(int m, int n) {
@@ -68,51 +74,55 @@ SparseMatrix::~SparseMatrix() {
 
     delete m_head;
 }
-
 void SparseMatrix::insert(int m, int n, double value) {
+    // Verifica se as coordenadas estão dentro dos limites válidos da matriz
     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
         throw std::out_of_range("Posição inválida na matriz.");
     }
 
-    Node * linhaH = this->m_head->abaixo;
+    // Encontra o nó da linha apropriada para inserção
+    Node* linhaH = this->m_head->abaixo;
 
     while (linhaH != m_head && linhaH->linha < m) {
         linhaH = linhaH->abaixo;
     }
 
-    Node * colunaH = m_head->direita;
+    // Encontra o nó da coluna apropriada para inserção
+    Node* colunaH = m_head->direita;
 
     while (colunaH != m_head && colunaH->coluna < n) {
         colunaH = colunaH->direita;
     }
 
-    Node * noVizinhoC = linhaH;
+    // Encontra o nó vizinho à direita na mesma linha
+    Node* noVizinhoC = linhaH;
 
     while (noVizinhoC->direita != linhaH && noVizinhoC->direita->coluna < n) {
         noVizinhoC = noVizinhoC->direita;
     }
 
- std::cout << noVizinhoC->linha << ", " << noVizinhoC->coluna << std::endl;
+    std::cout << noVizinhoC->linha << ", " << noVizinhoC->coluna << std::endl;
 
-    Node * noVizinhoL = colunaH;
+    // Encontra o nó vizinho abaixo na mesma coluna
+    Node* noVizinhoL = colunaH;
 
     while (noVizinhoL->abaixo != colunaH && noVizinhoL->abaixo->linha < m) {
         noVizinhoL = noVizinhoL->abaixo;
     }
 
- std::cout << noVizinhoL->linha << ", " << noVizinhoL->coluna << std::endl;
+    std::cout << noVizinhoL->linha << ", " << noVizinhoL->coluna << std::endl;
 
-    if(noVizinhoL->direita->linha == m && noVizinhoC->abaixo->coluna == n) {
+    // Se o elemento já existe na posição, atualiza seu valor
+    if (noVizinhoL->direita->linha == m && noVizinhoC->abaixo->coluna == n) {
         noVizinhoL->valor = value;
         return;
     }
 
-    Node * novo = new Node(noVizinhoC->direita, noVizinhoL->abaixo, m, n, value);
-    
+    // Cria um novo nó e o insere na posição apropriada
+    Node* novo = new Node(noVizinhoC->direita, noVizinhoL->abaixo, m, n, value);
     noVizinhoC->direita = novo; 
-    noVizinhoL->abaixo  = novo;
+    noVizinhoL->abaixo = novo;
 }
-
 
 // void SparseMatrix::insert(int m, int n, double value) {
 //     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
@@ -142,43 +152,45 @@ void SparseMatrix::insert(int m, int n, double value) {
 // }
 
 double SparseMatrix::get(int m, int n) {
+    // Verifica se as coordenadas estão dentro dos limites válidos da matriz
     if (m < 0 || n < 0 || m >= this->maxm || n >= this->maxn) {
         throw std::out_of_range("Posição inválida na matriz.");
     }
 
+    // Encontra o nó da linha correta na lista encadeada
     Node* linhaH = m_head->abaixo;
 
-    // Percorrer a lista encadeada na linha correta
     while (linhaH != m_head && linhaH->linha < m) {
         linhaH = linhaH->abaixo;
     }
+
+    // Verifica se a linha correta foi encontrada
     if (linhaH != m_head && linhaH->linha == m) {
         Node* colunaH = linhaH->direita;
 
+        // Percorre os nós na linha até encontrar a coluna desejada
         while (colunaH != linhaH && colunaH->coluna != n) {
             colunaH = colunaH->direita;
         }
 
-        // std::cout << ((colunaH->coluna == n) ? "true" : "false ")<< n << std::endl;
+        // Verifica se a coluna correta foi encontrada
         if (colunaH != linhaH && colunaH->coluna == n) {
-            return colunaH->valor;
+            return colunaH->valor; // Retorna o valor do nó
         }
     }
 
-    return 0;
+    return 0; // Retorna 0 se não foi encontrado nenhum valor na posição especificada
 }
 
-
-
 void SparseMatrix::print() {
-    int m = this->maxm;
-    int n = this->maxn;
+    int m = this->maxm; // Armazena o número de linhas da matriz
+    int n = this->maxn; // Armazena o número de colunas da matriz
 
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            std::cout << get(i, j) << " ";
+    for (int i = 0; i < m; i++) { // Percorre as linhas da matriz
+        for (int j = 0; j < n; j++) { // Percorre as colunas da matriz
+            std::cout << get(i, j) << " "; // Obtém o valor da posição (i, j) e imprime na tela
         }
-        std::cout << '\n';
+        std::cout << '\n'; // Quebra de linha após imprimir uma linha completa da matriz
     }
 }
 

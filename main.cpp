@@ -4,7 +4,36 @@
 
 using namespace std;
 
+SparseMatrix* sum(SparseMatrix* A, SparseMatrix* B) {
+    // Verifica se as matrizes têm o mesmo tamanho
+    if (A->getMaxM() != B->getMaxM() || A->getMaxN() != B->getMaxN()) {
+        throw std::invalid_argument("As matrizes devem ter o mesmo tamanho para serem somadas.");
+    }
+
+    int m = A->getMaxM();
+    int n = A->getMaxN();
+
+    // Cria uma nova matriz C com o mesmo tamanho de A e B
+    SparseMatrix* C = new SparseMatrix(m, n);
+
+    // Percorre todas as posições da matriz
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            // Obtém os valores de A e B nas posições (i, j)
+            double valueA = A->get(i, j);
+            double valueB = B->get(i, j);
+
+            // Calcula a soma dos valores e insere na matriz C
+            double sum = valueA + valueB;
+            C->insert(i, j, sum);
+        }
+    }
+
+    return C; // Retorna a matriz C resultante da soma de A e B
+}
+
 int main(){
+    
     cout << "Criacao da matriz" << endl;
     int m, n, value;
     cin >> m >> n;
