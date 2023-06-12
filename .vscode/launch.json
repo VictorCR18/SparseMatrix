@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/caval/OneDrive/Área de Trabalho/Matriz esparca",
-      "program": "c:/Users/caval/OneDrive/Área de Trabalho/Matriz esparca/build/Debug/outDebug",
+      "cwd": "c:/Users/caval/OneDrive/Área de Trabalho/Matriz esparsa",
+      "program": "c:/Users/caval/OneDrive/Área de Trabalho/Matriz esparsa/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
